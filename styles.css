@@ -1,0 +1,47 @@
+:root {
+  color-scheme: dark;
+  --page: #15171b;
+  --frame: #292b31;
+  --text: #f4efe5;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: var(--page);
+  color: var(--text);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+#game-shell {
+  width: min(100vw, 1120px);
+  height: min(100vh, 720px);
+  display: grid;
+  place-items: center;
+  padding: 12px;
+  background: var(--frame);
+}
+
+#game {
+  width: 100%;
+  height: 100%;
+}
+
+canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+}
