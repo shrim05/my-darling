@@ -5,18 +5,27 @@ Phaser 3 CDN을 사용하는 GitHub Pages용 단일 `index.html` 게임입니다
 ## 실행
 
 ```bash
-python3 -m http.server 4173
+npm run package:static
+npm run serve:static
 ```
 
-브라우저에서 `http://127.0.0.1:4173`을 엽니다.
+브라우저에서 `http://127.0.0.1:4175`를 엽니다.
 
-## 배포
+## 정적 배포
 
-GitHub 저장소 루트에 [index.html](index.html) 하나를 올린 뒤 Pages source를 `main` 브랜치의 root로 설정하면 됩니다. Phaser 3만 CDN에서 불러오고, 나머지 게임 에셋은 HTML 내부에 포함되어 있습니다.
+아래 명령으로 최신 단일 HTML을 생성합니다.
+
+```bash
+npm run package:static
+```
+
+생성물은 [dist/index.html](dist/index.html) 하나입니다. GitHub Pages에는 이 파일을 배포 브랜치나 Pages 루트의 `index.html`로 올리면 됩니다.
+
+Phaser 3만 CDN에서 불러오고, 나머지 게임 에셋은 HTML 내부에 포함되어 있습니다.
 
 필수 배포 파일:
 
-- [index.html](index.html)
+- [dist/index.html](dist/index.html)
 
 ## 조작
 
@@ -31,14 +40,15 @@ GitHub 저장소 루트에 [index.html](index.html) 하나를 올린 뒤 Pages s
 - 캐릭터는 현재 1프레임 고정 표시로 적용하며, 걷기 이미지는 나중에 교체할 수 있도록 스프라이트시트 구조를 유지
 - 캐릭터 발 위치를 충돌 박스 기준으로 보정해 시작/합류/성장 전환 때 아래로 떨어지는 현상을 줄임
 - 연도별 배경 전환: 유년기, 학교, 캠퍼스, 회사, 만남/결혼 숲길
-- 기본 BGM과 만남 이후 클라이막스 BGM을 MP3 data URI로 HTML에 포함
+- `The_Amber_Path.mp4` BGM을 data URI로 HTML에 포함
 - 이벤트 문구는 화면 고정 HTML 패널로 표시해 점프와 모바일 화면에서 잘리지 않도록 처리
 - `artifacts/live-smoke.spec.js`와 `scripts/live_test.py`로 데스크톱/모바일/태블릿 smoke 테스트 가능
 
 ## 검증
 
 ```bash
-python3 -m http.server 4173
-TEST_URL=http://127.0.0.1:4173/ npx playwright test artifacts/live-smoke.spec.js
-TEST_URL=http://127.0.0.1:4173/ python3 scripts/live_test.py
+npm run package:static
+npm run serve:static
+TEST_URL=http://127.0.0.1:4175/ npx playwright test artifacts/live-smoke.spec.js
+TEST_URL=http://127.0.0.1:4175/ python3 scripts/live_test.py
 ```

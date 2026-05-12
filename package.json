@@ -1,4 +1,10 @@
 {
+  "scripts": {
+    "build": "python3 scripts/build_single_index.py",
+    "package:static": "python3 scripts/package_static.py",
+    "serve:static": "python3 -m http.server 4175 --directory dist",
+    "test:smoke": "npx playwright test artifacts/live-smoke.spec.js"
+  },
   "devDependencies": {
     "@playwright/test": "^1.60.0"
   }
