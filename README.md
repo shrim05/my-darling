@@ -27,7 +27,18 @@ GitHub 저장소 루트에 [index.html](index.html) 하나를 올린 뒤 Pages s
 
 ## 적용 내용
 
-- 아기, 학생, 성인 3단계 캐릭터 스프라이트시트
+- 아기, 학생, 성인 3단계 캐릭터 스프라이트와 2025년 이후 신랑/신부 복장 전환
+- 캐릭터는 현재 1프레임 고정 표시로 적용하며, 걷기 이미지는 나중에 교체할 수 있도록 스프라이트시트 구조를 유지
+- 캐릭터 발 위치를 충돌 박스 기준으로 보정해 시작/합류/성장 전환 때 아래로 떨어지는 현상을 줄임
 - 연도별 배경 전환: 유년기, 학교, 캠퍼스, 회사, 만남/결혼 숲길
-- 기본 BGM과 만남 이후 클라이막스 BGM을 로컬 합성 WAV로 생성해 HTML에 포함
+- 기본 BGM과 만남 이후 클라이막스 BGM을 MP3 data URI로 HTML에 포함
 - 이벤트 문구는 화면 고정 HTML 패널로 표시해 점프와 모바일 화면에서 잘리지 않도록 처리
+- `artifacts/live-smoke.spec.js`와 `scripts/live_test.py`로 데스크톱/모바일/태블릿 smoke 테스트 가능
+
+## 검증
+
+```bash
+python3 -m http.server 4173
+TEST_URL=http://127.0.0.1:4173/ npx playwright test artifacts/live-smoke.spec.js
+TEST_URL=http://127.0.0.1:4173/ python3 scripts/live_test.py
+```

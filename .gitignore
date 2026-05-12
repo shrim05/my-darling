@@ -1,1 +1,4 @@
 assets/imgs
+node_modules/
+test-results/
+scripts/__pycache__/

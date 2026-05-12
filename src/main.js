@@ -1,6 +1,8 @@
 const GAME_WIDTH = 960;
 const GAME_HEIGHT = 540;
 const HALF_HEIGHT = GAME_HEIGHT / 2;
+const SHARED_SCROLL_Y = 0;
+const SHARED_FOLLOW_Y = GAME_HEIGHT / 2;
 const MEET_X = 3720;
 const HUSBAND_START_X = 160;
 const WIFE_START_X = 7280;
@@ -182,7 +184,8 @@ class BootScene extends Phaser.Scene {
   preload() {
     this.load.json("timelineEvents", "assets/data/events.json");
     this.load.image("conceptRef", "assets/imgs/concept.jpg");
-    this.load.image("weddingPhoto", "assets/imgs/wedding_pics/DSC00038.jpg");
+    this.load.image("weddingPhoto", "assets/generated/YJH01044.jpg");
+    this.load.audio("bgm", "assets/generated/The_Amber_Path.mp4");
   }
 
   create() {
@@ -219,64 +222,37 @@ class BootScene extends Phaser.Scene {
 }
 
 class TimelineMusic {
-  constructor() {
-    this.context = null;
-    this.nodes = [];
+  constructor(scene) {
+    this.scene = scene;
+    this.track = null;
     this.mode = "soft";
     this.started = false;
   }
 
   start() {
-    if (this.started || !window.AudioContext) return;
-    this.context = new window.AudioContext();
+    if (this.started) return;
     this.started = true;
+    this.track = this.scene.sound.add("bgm", { loop: true, volume: 0 });
+    this.track.play();
     this.setMode("soft");
   }
 
   setMode(mode) {
     this.mode = mode;
-    if (!this.context) return;
-    this.stop();
-
-    const now = this.context.currentTime;
-    const master = this.context.createGain();
-    master.gain.setValueAtTime(0.0001, now);
-    master.gain.exponentialRampToValueAtTime(mode === "climax" ? 0.07 : 0.035, now + 1.2);
-    master.connect(this.context.destination);
-
-    const freqs = mode === "climax" ? [261.63, 329.63, 392, 523.25] : [196, 246.94, 329.63];
-    freqs.forEach((freq, index) => {
-      const osc = this.context.createOscillator();
-      const gain = this.context.createGain();
-      osc.type = index % 2 === 0 ? "sine" : "triangle";
-      osc.frequency.value = freq;
-      gain.gain.value = 0.22 / freqs.length;
-      osc.connect(gain);
-      gain.connect(master);
-      osc.start(now + index * 0.04);
-      this.nodes.push(osc, gain);
+    if (!this.track) return;
+    this.scene.tweens.add({
+      targets: this.track,
+      volume: mode === "climax" ? 0.44 : 0.34,
+      duration: 1200,
+      ease: "Sine.Out"
     });
-    this.nodes.push(master);
   }
 
   stop() {
-    this.nodes.forEach((node) => {
-      if (typeof node.stop === "function") {
-        try {
-          node.stop();
-        } catch (error) {
-          // Oscillators can only be stopped once.
-        }
-      }
-      if (typeof node.disconnect === "function") {
-        try {
-          node.disconnect();
-        } catch (error) {
-          // Already disconnected.
-        }
-      }
-    });
-    this.nodes = [];
+    if (!this.track) return;
+    this.track.stop();
+    this.track = null;
+    this.started = false;
   }
 }
 
@@ -290,7 +266,7 @@ class TimelineScene extends Phaser.Scene {
     this.mergeProgress = 0;
     this.seenEvents = new Set();
     this.eventsData = this.cache.json.get("timelineEvents").events;
-    this.music = new TimelineMusic();
+    this.music = new TimelineMusic(this);
 
     this.physics.world.setBounds(0, 0, WIFE_START_X + 480, 1180);
     this.createWorld();
@@ -387,7 +363,7 @@ class TimelineScene extends Phaser.Scene {
       });
     });
 
-    this.followPoint = { x: MEET_X, y: TOP_GROUND_Y - 90 };
+    this.followPoint = { x: MEET_X, y: SHARED_FOLLOW_Y };
   }
 
   createPlayer(owner, x, y) {
@@ -542,7 +518,7 @@ class TimelineScene extends Phaser.Scene {
     this.husband.x = Phaser.Math.Clamp(this.husband.x, MEET_X, END_X + 80);
     this.wife.x = Phaser.Math.Clamp(this.wife.x, MEET_X + 50, END_X + 140);
     this.followPoint.x = (this.husband.x + this.wife.x) / 2;
-    this.followPoint.y = TOP_GROUND_Y - 102;
+    this.followPoint.y = SHARED_FOLLOW_Y;
   }
 
   movePlayer(player, leftDown, rightDown, jumpKey, facingDirection) {
@@ -688,14 +664,16 @@ class TimelineScene extends Phaser.Scene {
     this.wifeCam.setAlpha(1 - this.mergeProgress);
 
     const targetX = (this.husband.x + this.wife.x) / 2;
-    const targetY = TOP_GROUND_Y - 105;
+    const targetY = SHARED_SCROLL_Y;
     this.cameras.main.scrollX = Phaser.Math.Linear(this.cameras.main.scrollX, targetX - GAME_WIDTH / 2, 0.04);
-    this.cameras.main.scrollY = Phaser.Math.Linear(this.cameras.main.scrollY, targetY - GAME_HEIGHT / 2, 0.04);
+    this.cameras.main.scrollY = Phaser.Math.Linear(this.cameras.main.scrollY, targetY, 0.04);
 
     if (this.mergeProgress > 0.985) {
       this.state = "shared";
       this.cameras.remove(this.wifeCam);
       this.cameras.main.setViewport(0, 0, GAME_WIDTH, GAME_HEIGHT);
+      this.followPoint.y = SHARED_FOLLOW_Y;
+      this.cameras.main.scrollY = SHARED_SCROLL_Y;
       this.cameras.main.startFollow(this.followPoint, true, 0.08, 0.08);
       this.husband.body.setAllowGravity(true);
       this.wife.body.setAllowGravity(true);
