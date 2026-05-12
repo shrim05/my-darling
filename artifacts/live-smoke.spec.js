@@ -32,6 +32,7 @@ test("timeline data and asset wiring match requested story gaps and media", asyn
     .map((event) => event.year)
     .sort((a, b) => a - b);
   expect(sharedYears).toEqual([2020, 2021, 2022, 2023, 2024, 2025, 2026]);
+  expect(fs.existsSync(path.join(__dirname, "..", "assets/generated/cover.png"))).toBeTruthy();
 
   for (const sourceFile of ["scripts/build_single_index.py", "src/main.js"]) {
     const source = fs.readFileSync(path.join(__dirname, "..", sourceFile), "utf8");
@@ -41,6 +42,11 @@ test("timeline data and asset wiring match requested story gaps and media", asyn
     expect(source).not.toContain("Where_The_Tide_Meets_Home.mp3");
     expect(source).not.toContain("DSC00038.jpg");
   }
+
+  const buildSource = fs.readFileSync(path.join(__dirname, "..", "scripts/build_single_index.py"), "utf8");
+  expect(buildSource).toContain("og:image");
+  expect(buildSource).toContain("assets/generated/cover.png");
+  expect(buildSource).toContain("https://shrim05.github.io/my-darling/");
 });
 
 for (const [name, viewport, isMobile] of cases) {

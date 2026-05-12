@@ -19,13 +19,20 @@ npm run serve:static
 npm run package:static
 ```
 
-생성물은 [dist/index.html](dist/index.html) 하나입니다. GitHub Pages에는 이 파일을 배포 브랜치나 Pages 루트의 `index.html`로 올리면 됩니다.
+생성물은 [dist/index.html](dist/index.html)과 링크 공유 썸네일용 [dist/assets/generated/cover.png](dist/assets/generated/cover.png)입니다. GitHub Pages에는 이 두 파일을 같은 경로로 올리면 됩니다.
 
 Phaser 3만 CDN에서 불러오고, 나머지 게임 에셋은 HTML 내부에 포함되어 있습니다.
 
 필수 배포 파일:
 
 - [dist/index.html](dist/index.html)
+- [dist/assets/generated/cover.png](dist/assets/generated/cover.png)
+
+카카오톡 같은 링크 미리보기는 `cover.png`를 Open Graph 이미지로 사용합니다. 기본 Pages 주소는 `https://shrim05.github.io/my-darling/`로 잡혀 있습니다. 다른 주소나 커스텀 도메인으로 배포한다면 아래처럼 다시 패키징하세요.
+
+```bash
+PUBLIC_URL=https://example.com/my-darling/ npm run package:static
+```
 
 ## 조작
 

@@ -2,10 +2,16 @@ from __future__ import annotations
 
 import base64
 import json
+import os
 from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
+DEFAULT_PUBLIC_URL = "https://shrim05.github.io/my-darling/"
+PUBLIC_URL = os.environ.get("PUBLIC_URL", DEFAULT_PUBLIC_URL).strip()
+PUBLIC_URL = PUBLIC_URL if PUBLIC_URL.endswith("/") else f"{PUBLIC_URL}/"
+OG_IMAGE_PATH = "assets/generated/cover.png"
+OG_IMAGE_URL = f"{PUBLIC_URL}{OG_IMAGE_PATH}"
 
 
 def data_uri(path: str, mime: str) -> str:
@@ -44,6 +50,20 @@ html = """<!doctype html>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
     <title>우리의 시간</title>
+    <meta name="description" content="권영호와 방은지의 시간을 함께 걷는 픽셀 타임라인 게임" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="우리의 시간" />
+    <meta property="og:description" content="권영호와 방은지의 시간을 함께 걷는 픽셀 타임라인 게임" />
+    <meta property="og:image" content="__OG_IMAGE__" />
+    <meta property="og:image:secure_url" content="__OG_IMAGE__" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1025" />
+    <meta property="og:image:height" content="960" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="우리의 시간" />
+    <meta name="twitter:description" content="권영호와 방은지의 시간을 함께 걷는 픽셀 타임라인 게임" />
+    <meta name="twitter:image" content="__OG_IMAGE__" />
+    <link rel="image_src" href="__OG_IMAGE__" />
     <style>
       :root {
         color-scheme: dark;
@@ -972,6 +992,7 @@ replacements = {
     "__FOREST_LIGHTS__": assets["forest_lights"],
     "__WEDDING_PHOTO__": assets["wedding_photo"],
     "__BGM__": assets["bgm"],
+    "__OG_IMAGE__": OG_IMAGE_URL,
     "__EVENTS__": json.dumps(events, ensure_ascii=False),
 }
 
