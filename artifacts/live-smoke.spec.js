@@ -9,6 +9,7 @@ const baseURL = process.env.TEST_URL || "http://127.0.0.1:4173/";
 const cases = [
   ["desktop", { width: 1180, height: 720 }, false],
   ["galaxy-s23", { width: 360, height: 780 }, true],
+  ["galaxy-s23-landscape", { width: 780, height: 360 }, true],
   ["ipad", { width: 820, height: 1180 }, true],
   ["galaxy-tab", { width: 800, height: 1280 }, true],
 ];
@@ -191,6 +192,16 @@ for (const [name, viewport, isMobile] of cases) {
     const husbandCardBox = await page.locator("#story-card-husband").boundingBox();
     const wifeCardBox = await page.locator("#story-card-wife").boundingBox();
     expect(husbandCardBox.y + husbandCardBox.height).toBeLessThanOrEqual(wifeCardBox.y);
+    const compactSplitCards = isMobile && (viewport.width <= 760 || viewport.height <= 430);
+    if (compactSplitCards) {
+      for (const box of [husbandCardBox, wifeCardBox]) {
+        expect(box.x + box.width).toBeLessThanOrEqual(viewport.width * 0.72);
+        expect(box.height).toBeLessThanOrEqual(viewport.height * 0.24);
+      }
+      if (viewport.height > viewport.width) {
+        expect(wifeCardBox.y).toBeGreaterThanOrEqual(viewport.height * 0.68);
+      }
+    }
     await page.screenshot({ path: path.join(outDir, `${name}-split-cards.png`), fullPage: true });
 
     await page.evaluate(() => window.__scene.startMerge());

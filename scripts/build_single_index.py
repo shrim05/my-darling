@@ -249,7 +249,7 @@ html = """<!doctype html>
       @media (pointer: coarse) {
         #touch-hints { display: flex; }
       }
-      @media (max-width: 760px) {
+      @media (max-width: 760px), (pointer: coarse) and (max-height: 430px) {
         #game {
           width: 100vw;
           height: 100dvh;
@@ -257,22 +257,67 @@ html = """<!doctype html>
           max-height: none;
         }
         .story-panel {
-          max-height: min(45dvh, 260px);
+          padding: 9px 11px;
+          max-height: min(38dvh, 220px);
           overflow-y: auto;
           overscroll-behavior: contain;
         }
+        .story-title {
+          font-size: clamp(12px, 3.2vw, 16px);
+          line-height: 1.25;
+          margin-bottom: 4px;
+        }
+        .story-text {
+          font-size: clamp(11px, 3vw, 14px);
+          line-height: 1.42;
+        }
         .split-story {
-          width: calc(100vw - 28px - env(safe-area-inset-left) - env(safe-area-inset-right));
-          max-width: none;
+          left: max(10px, env(safe-area-inset-left));
+          right: auto;
+          width: min(66vw, 270px);
+          max-width: 270px;
+          max-height: min(20dvh, 136px);
+          padding: 8px 10px;
         }
         #story-card-husband {
-          top: max(10px, env(safe-area-inset-top));
+          top: max(8px, env(safe-area-inset-top));
         }
         #story-card-wife {
-          top: calc(50dvh + 10px);
+          top: calc(50dvh + 8px);
         }
         #wedding-photo {
           width: min(34vw, 132px);
+        }
+      }
+      @media (pointer: coarse) and (max-height: 430px) {
+        .story-panel {
+          padding: 7px 9px;
+        }
+        .story-title {
+          font-size: 12px;
+          line-height: 1.2;
+          margin-bottom: 2px;
+        }
+        .story-text {
+          font-size: 11px;
+          line-height: 1.32;
+        }
+        .split-story {
+          width: min(36vw, 260px);
+          max-width: 260px;
+          max-height: min(96px, calc(50dvh - 22px));
+        }
+        #story-card-husband {
+          top: max(6px, env(safe-area-inset-top));
+        }
+        #story-card-wife {
+          top: calc(50dvh + 6px);
+        }
+      }
+      @media (max-width: 760px) and (orientation: portrait) {
+        #story-card-wife {
+          top: auto;
+          bottom: max(84px, calc(env(safe-area-inset-bottom) + 78px));
         }
       }
     </style>
